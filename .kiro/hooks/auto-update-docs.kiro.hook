@@ -1,0 +1,21 @@
+{
+  "enabled": true,
+  "name": "Auto Update Documentation",
+  "description": "Automatically prompts the agent to review and update relevant markdown documentation files when code files are modified",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "*.py",
+      "*.ts",
+      "*.vue",
+      "*.js",
+      "*.tsx",
+      "*.jsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A code file was just modified. Please scan for any related .md files (README.md, documentation files, or spec files) that might need updates to reflect these code changes. Update them automatically to keep documentation in sync."
+  }
+}

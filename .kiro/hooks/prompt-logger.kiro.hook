@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Prompt History Logger",
+  "description": "Logs all submitted prompts to a JSON file with timestamp for maintaining a prompt history",
+  "version": "1",
+  "when": {
+    "type": "promptSubmit"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Log this prompt to .kiro/prompt-history.json with the current timestamp in this format: {\"timestamp\": \"YYYY-MM-DDTHH:mm:ss\", \"prompt\": \"the actual prompt text\"}. Append it to the existing array if the file exists, or create a new array if it doesn't. Use the exact prompt text that was just submitted."
+  }
+}

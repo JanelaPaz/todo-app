@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "enabled": true,
+  "name": "Bandit Security Scan",
+  "description": "Runs Bandit against the full codebase at medium severity and above, then asks the agent to produce a grouped security report with context-specific risk explanations for FastAPI + SQLite. No auto-fixes — report only.",
+  "when": {
+    "type": "userTriggered"
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Run Bandit against the full app directory using the activated virtual environment. Use medium severity and above:\\n\\nPowerShell command: `.venv\\\\Scripts\\\\Activate.ps1; bandit -r app/ -ll -f json`\\n\\nParse the JSON output and produce a security report with the following structure:\\n\\n---\\n## Bandit Security Report\\n\\n### HIGH Severity Findings\\nFor each finding:\\n- **File & Line:** `<file>:<line>`\\n- **Vulnerability:** <test_id> — <issue_text>\\n- **Risk in this context:** Explain why this is a risk specifically in a FastAPI + SQLite application\\n- **Suggested fix:** Concrete code-level recommendation\\n\\n### MEDIUM Severity Findings\\n(same format as above)\\n\\n### Raw SQL String Construction\\nList any findings related to raw SQL string building (B608, string formatting in SQL contexts) separately and flag them prominently — this is the primary SQLite injection risk vector.\\n\\n### Summary\\n- Total HIGH: N\\n- Total MEDIUM: N\\n- Files scanned: N\\n---\\n\\nDo NOT auto-fix anything. Produce the report only. If Bandit is not installed, note that it can be installed with `pip install bandit` inside the virtual environment."
+  }
+}
