@@ -10,5 +10,37 @@
   {
     "timestamp": "2026-05-21T00:00:00",
     "prompt": "scan the auto update documentation hooks, how can i use it and how can i trigger it"
+  },
+  {
+    "timestamp": "2026-05-24T08:26:21",
+    "prompt": "I just installed the \"generate-pdf-user-guide\" power and would like to try it out. Please help me get started by:\n\n    1. First, activate the power to read its documentation and understand what it does\n    2. Give me a brief overview of what this power can do\n    3. If the powers has onboarding instructions, please follow them step by step.\n    4. Show me a simple example of how to use it\n\n    Let's go through this together step by step."
+  },
+  {
+    "timestamp": "2026-05-24T08:26:59",
+    "prompt": "using AI DLC, I want to develop Unit 2"
+  },
+  {
+    "timestamp": "2026-05-24T08:32:00",
+    "prompt": "do these"
+  },
+  {
+    "timestamp": "2026-05-24T08:32:28",
+    "prompt": "proceed"
+  },
+  {
+    "timestamp": "2026-05-24T08:34:18",
+    "prompt": "we'll be doing all the changes, so you can start whatever. so go"
+  },
+  {
+    "timestamp": "2026-05-24T08:36:53",
+    "prompt": "what units left, and what order, and how many executions to finish all the tasks/units"
+  },
+  {
+    "timestamp": "2026-05-24T08:37:30",
+    "prompt": "you may proceed with the remaining units"
+  },
+  {
+    "timestamp": "2026-05-24T08:41:23",
+    "prompt": "just finish unit 1 and 2"
   }
 ]

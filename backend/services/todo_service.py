@@ -44,6 +44,11 @@ class TodoService:
         if data.due_date is not None:
             self._validate_due_date(data.due_date)
 
+        # Validate reminder_at format if provided (Unit 2)
+        reminder_at_value: str | None = None
+        if data.reminder_at is not None:
+            reminder_at_value = self._validate_reminder_at(data.reminder_at)
+
         # Create todo record with defaults
         todo_data = {
             "id": str(uuid.uuid4()),
@@ -52,6 +57,7 @@ class TodoService:
             "description": data.description,
             "priority": data.priority.value if data.priority else Priority.MEDIUM.value,
             "due_date": data.due_date,
+            "reminder_at": reminder_at_value,
             "status": data.status.value if data.status else Status.PENDING.value,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": None,
@@ -193,6 +199,13 @@ class TodoService:
             self._validate_due_date(data.due_date)
             updates["due_date"] = data.due_date
 
+        # reminder_at supports clearing via explicit null (Unit 2)
+        if "reminder_at" in data.model_fields_set:
+            if data.reminder_at is None:
+                updates["reminder_at"] = None
+            else:
+                updates["reminder_at"] = self._validate_reminder_at(data.reminder_at)
+
         if data.status is not None:
             updates["status"] = data.status.value
 
@@ -286,3 +299,39 @@ class TodoService:
             raise ValidationError(
                 [{"field": "due_date", "message": "Invalid date format. Must be YYYY-MM-DD"}]
             )
+
+    def _validate_reminder_at(self, reminder_at: str) -> str:
+        """Validate that reminder_at is a valid ISO 8601 datetime (Unit 2).
+
+        Accepts both ``Z`` (Zulu) suffix and explicit ``±HH:MM`` offsets.
+        The stored value is the original input string so round-trip behavior
+        is preserved.
+
+        Args:
+            reminder_at: The datetime string to validate.
+
+        Returns:
+            The original string if valid.
+
+        Raises:
+            ValidationError: If the datetime format is invalid.
+        """
+        if not isinstance(reminder_at, str) or not reminder_at.strip():
+            raise ValidationError(
+                [{"field": "reminder_at", "message": "Invalid datetime format. Must be ISO 8601 (e.g., 2024-01-15T10:30:00Z)"}]
+            )
+
+        # Python's fromisoformat does not accept the trailing 'Z' before 3.11+
+        # in all cases; normalize defensively.
+        candidate = reminder_at
+        if candidate.endswith("Z"):
+            candidate = candidate[:-1] + "+00:00"
+
+        try:
+            datetime.fromisoformat(candidate)
+        except (ValueError, TypeError):
+            raise ValidationError(
+                [{"field": "reminder_at", "message": "Invalid datetime format. Must be ISO 8601 (e.g., 2024-01-15T10:30:00Z)"}]
+            )
+
+        return reminder_at

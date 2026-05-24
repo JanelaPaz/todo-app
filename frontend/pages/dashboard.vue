@@ -134,6 +134,14 @@
                     >
                       Due: {{ formatDate(todo.due_date) }}
                     </span>
+                    <!-- Reminder -->
+                    <span
+                      v-if="todo.reminder_at"
+                      class="text-xs text-primary-600 dark:text-primary-400"
+                      :title="`Reminder: ${formatDateTime(todo.reminder_at)}`"
+                    >
+                      ⏰ {{ formatDateTime(todo.reminder_at) }}
+                    </span>
                   </div>
                 </div>
 
@@ -252,6 +260,19 @@
                 </div>
               </div>
 
+              <!-- Reminder -->
+              <div class="mb-4">
+                <label for="todo-reminder-at" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                  Reminder (optional)
+                </label>
+                <input
+                  id="todo-reminder-at"
+                  v-model="createForm.reminder_at_local"
+                  type="datetime-local"
+                  class="input-field"
+                />
+              </div>
+
               <!-- Actions -->
               <div class="flex gap-3 justify-end mt-6">
                 <button
@@ -341,11 +362,12 @@ const statusFilter = ref<string | undefined>(undefined)
 const priorityFilter = ref<string | undefined>(undefined)
 const sortBy = ref<string | undefined>(undefined)
 
-const createForm = reactive<TodoCreate>({
+const createForm = reactive<TodoCreate & { reminder_at_local?: string }>({
   title: '',
   description: undefined,
   priority: 'medium',
   due_date: undefined,
+  reminder_at_local: '',
 })
 
 // Fetch data on mount
@@ -386,6 +408,13 @@ async function handleCreateTodo() {
     due_date: createForm.due_date || undefined,
   }
 
+  if (createForm.reminder_at_local) {
+    const reminderDate = new Date(createForm.reminder_at_local)
+    if (!isNaN(reminderDate.getTime())) {
+      data.reminder_at = reminderDate.toISOString()
+    }
+  }
+
   const result = await createTodo(data)
   creating.value = false
 
@@ -404,6 +433,7 @@ function resetCreateForm() {
   createForm.description = undefined
   createForm.priority = 'medium'
   createForm.due_date = undefined
+  createForm.reminder_at_local = ''
 }
 
 // Toggle todo status
@@ -495,6 +525,17 @@ function formatStatus(status: string): string {
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr + 'T00:00:00')
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+
+function formatDateTime(iso: string): string {
+  const date = new Date(iso)
+  if (isNaN(date.getTime())) return iso
+  return date.toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
 }
 
 function isOverdue(todo: Todo): boolean {

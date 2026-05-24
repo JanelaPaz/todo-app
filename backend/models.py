@@ -68,6 +68,7 @@ class Todo(BaseModel):
     description: str | None = None  # Optional, max 2000 chars
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # ISO 8601 date (YYYY-MM-DD) or None
+    reminder_at: datetime | None = None  # ISO 8601 datetime (Unit 2)
     status: Status = Status.PENDING
     created_at: datetime
     updated_at: datetime | None = None
@@ -80,6 +81,7 @@ class TodoCreate(BaseModel):
     description: str | None = Field(default=None, max_length=2000)
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # Validated as YYYY-MM-DD
+    reminder_at: str | None = None  # Validated as ISO 8601 datetime (Unit 2)
     status: Status = Status.PENDING
 
 
@@ -90,6 +92,7 @@ class TodoUpdate(BaseModel):
     description: str | None = Field(default=None, max_length=2000)
     priority: Priority | None = None
     due_date: str | None = None
+    reminder_at: str | None = None  # Explicit null clears the reminder (Unit 2)
     status: Status | None = None
 
 

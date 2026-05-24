@@ -12,6 +12,7 @@ export interface Todo {
   description: string | null
   priority: 'low' | 'medium' | 'high'
   due_date: string | null
+  reminder_at: string | null
   status: 'pending' | 'in-progress' | 'done'
   created_at: string
   updated_at: string | null
@@ -25,8 +26,8 @@ export interface TodoStats {
 }
 
 export type TodoCreate = Pick<Todo, 'title'> &
-  Partial<Pick<Todo, 'description' | 'priority' | 'due_date' | 'status'>>
+  Partial<Pick<Todo, 'description' | 'priority' | 'due_date' | 'reminder_at' | 'status'>>
 
 export type TodoUpdate = Partial<
-  Pick<Todo, 'title' | 'description' | 'priority' | 'due_date' | 'status'>
+  Pick<Todo, 'title' | 'description' | 'priority' | 'due_date' | 'reminder_at' | 'status'>
 >

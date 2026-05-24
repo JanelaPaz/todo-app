@@ -45,6 +45,7 @@ export function useTodos() {
       description: data.description ?? null,
       priority: data.priority ?? 'medium',
       due_date: data.due_date ?? null,
+      reminder_at: data.reminder_at ?? null,
       status: data.status ?? 'pending',
       created_at: new Date().toISOString(),
       updated_at: null,

@@ -133,22 +133,41 @@
                 </div>
               </div>
 
-              <!-- Due date field -->
-              <div class="mb-6">
-                <label for="todo-due-date" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
-                  Due Date
-                </label>
-                <input
-                  id="todo-due-date"
-                  v-model="form.due_date"
-                  type="date"
-                  class="input-field"
-                  :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.due_date }"
-                  :disabled="submitting"
-                />
-                <p v-if="errors.due_date" class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
-                  {{ errors.due_date }}
-                </p>
+              <!-- Due date and Reminder row -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label for="todo-due-date" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                    Due Date
+                  </label>
+                  <input
+                    id="todo-due-date"
+                    v-model="form.due_date"
+                    type="date"
+                    class="input-field"
+                    :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.due_date }"
+                    :disabled="submitting"
+                  />
+                  <p v-if="errors.due_date" class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+                    {{ errors.due_date }}
+                  </p>
+                </div>
+
+                <div>
+                  <label for="todo-reminder-at" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                    Reminder
+                  </label>
+                  <input
+                    id="todo-reminder-at"
+                    v-model="form.reminder_at"
+                    type="datetime-local"
+                    class="input-field"
+                    :class="{ 'border-red-500 focus:ring-red-500 focus:border-red-500': errors.reminder_at }"
+                    :disabled="submitting"
+                  />
+                  <p v-if="errors.reminder_at" class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
+                    {{ errors.reminder_at }}
+                  </p>
+                </div>
               </div>
 
               <!-- General error -->
@@ -225,6 +244,7 @@ const form = reactive({
   description: '',
   priority: 'medium' as 'low' | 'medium' | 'high',
   due_date: '',
+  reminder_at: '',
   status: 'pending' as 'pending' | 'in-progress' | 'done',
 })
 
@@ -232,6 +252,7 @@ const errors = reactive({
   title: '',
   description: '',
   due_date: '',
+  reminder_at: '',
   general: '',
 })
 
@@ -247,6 +268,7 @@ watch(() => props.visible, (newVal) => {
       form.description = props.todo.description ?? ''
       form.priority = props.todo.priority
       form.due_date = props.todo.due_date ?? ''
+      form.reminder_at = isoToLocalInput(props.todo.reminder_at)
       form.status = props.todo.status
     } else {
       // Reset to defaults for creating
@@ -254,6 +276,7 @@ watch(() => props.visible, (newVal) => {
       form.description = ''
       form.priority = 'medium'
       form.due_date = ''
+      form.reminder_at = ''
       form.status = 'pending'
     }
   }
@@ -266,6 +289,7 @@ watch(() => props.todo, (newTodo) => {
     form.description = newTodo.description ?? ''
     form.priority = newTodo.priority
     form.due_date = newTodo.due_date ?? ''
+    form.reminder_at = isoToLocalInput(newTodo.reminder_at)
     form.status = newTodo.status
   }
 })
@@ -274,7 +298,25 @@ function clearErrors() {
   errors.title = ''
   errors.description = ''
   errors.due_date = ''
+  errors.reminder_at = ''
   errors.general = ''
+}
+
+// Convert ISO 8601 datetime to a value compatible with <input type="datetime-local">.
+function isoToLocalInput(iso: string | null | undefined): string {
+  if (!iso) return ''
+  const d = new Date(iso)
+  if (isNaN(d.getTime())) return ''
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+// Convert a `datetime-local` form value to a UTC ISO 8601 string.
+function localInputToIso(value: string): string | null {
+  if (!value) return null
+  const d = new Date(value)
+  if (isNaN(d.getTime())) return null
+  return d.toISOString()
 }
 
 function validate(): boolean {
@@ -313,6 +355,15 @@ function validate(): boolean {
     }
   }
 
+  // Reminder validation: must parse to a valid datetime if provided
+  if (form.reminder_at) {
+    const reminderDate = new Date(form.reminder_at)
+    if (isNaN(reminderDate.getTime())) {
+      errors.reminder_at = 'Please enter a valid date and time'
+      valid = false
+    }
+  }
+
   return valid
 }
 
@@ -344,6 +395,21 @@ function handleSubmit() {
       data.due_date = newDueDate
     }
 
+    const newReminderIso = localInputToIso(form.reminder_at)
+    const currentReminderIso = todo.reminder_at ?? null
+    // Compare on the underlying instant, not the string representation, so
+    // re-saving an unchanged reminder does not produce a needless PUT.
+    const reminderChanged = (() => {
+      if (newReminderIso === currentReminderIso) return false
+      if (newReminderIso && currentReminderIso) {
+        return new Date(newReminderIso).getTime() !== new Date(currentReminderIso).getTime()
+      }
+      return true
+    })()
+    if (reminderChanged) {
+      data.reminder_at = newReminderIso
+    }
+
     if (form.status !== todo.status) {
       data.status = form.status
     }
@@ -366,6 +432,11 @@ function handleSubmit() {
       data.due_date = form.due_date
     }
 
+    const reminderIso = localInputToIso(form.reminder_at)
+    if (reminderIso) {
+      data.reminder_at = reminderIso
+    }
+
     emit('submit', data)
   }
 
@@ -378,7 +449,7 @@ function handleCancel() {
 }
 
 // Expose setError for parent components to set server-side errors
-function setError(field: 'title' | 'description' | 'due_date' | 'general', message: string) {
+function setError(field: 'title' | 'description' | 'due_date' | 'reminder_at' | 'general', message: string) {
   errors[field] = message
 }
 
