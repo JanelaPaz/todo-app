@@ -4,7 +4,7 @@ import type { User } from '~/types'
 export default defineNuxtRouteMiddleware(async (to) => {
   // Define route classifications
   const publicPages = ['/login', '/register']
-  const protectedPages = ['/dashboard']
+  const protectedPages = ['/dashboard', '/kanban']
 
   const isPublicPage = publicPages.includes(to.path)
   const isProtectedPage = protectedPages.includes(to.path) || to.path.startsWith('/dashboard')
