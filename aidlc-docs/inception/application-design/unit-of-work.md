@@ -22,7 +22,7 @@ This feature is decomposed into exactly 4 units of work. Each unit can be develo
 |---|---|---|
 | `backend/models.py` | Modify | Add Notification, NotificationResponse, NotificationsListResponse, NotificationType enum |
 | `backend/services/notification_service.py` | Create | NotificationService class with CRUD methods |
-| `backend/routers/notifications.py` | Create | FastAPI router with 4 endpoints |
+| `backend/routers/notifications.py` | Create | FastAPI router with 4 endpoints; GET endpoint integrates with Unit 2's `reminder_checker.check_user()` to detect and create notifications on each poll |
 | `backend/data/notifications.json` | Create | Empty JSON array `[]` |
 | `backend/main.py` | Modify | Import and register notifications router |
 
@@ -36,7 +36,7 @@ This feature is decomposed into exactly 4 units of work. Each unit can be develo
 - `notification_service.create(user_id, todo_id, notification_type, message) -> Notification`
 - `notification_service.exists(user_id, todo_id, notification_type) -> bool`
 
-**Dependencies**: None (standalone unit)
+**Dependencies**: Unit 2 (imports `reminder_checker.check_user()` to detect due notifications during GET /api/notifications; also requires `todo_store` access to read user's todos)
 
 ---
 
