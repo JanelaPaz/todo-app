@@ -32,19 +32,19 @@
 - [x] Application Design
 - [x] Units Generation
 
-### 🟢 CONSTRUCTION PHASE
-- [ ] Functional Design - NOT STARTED
-- [ ] NFR Requirements - NOT STARTED
-- [ ] NFR Design - NOT STARTED
-- [ ] Infrastructure Design - NOT STARTED
-- [ ] Code Generation - NOT STARTED
-- [ ] Build and Test - NOT STARTED
+### 🟢 CONSTRUCTION PHASE (Unit 2: Reminder Trigger Logic)
+- [x] Functional Design - SKIPPED (logic fully specified in contracts)
+- [x] NFR Requirements - SKIPPED (no new NFRs for this unit)
+- [x] NFR Design - SKIPPED (no NFR patterns needed)
+- [x] Infrastructure Design - SKIPPED (no infrastructure changes)
+- [x] Code Generation - COMPLETE
+- [x] Build and Test - COMPLETE
 
 ### 🟡 OPERATIONS PHASE
 - [ ] Operations - PLACEHOLDER
 
 ## Current Status
-- **Lifecycle Phase**: INCEPTION (COMPLETE)
-- **Current Stage**: All Inception stages complete
-- **Next Stage**: CONSTRUCTION PHASE (not started per user request)
-- **Status**: Inception package complete — ready for handoff to 4 parallel engineers
+- **Lifecycle Phase**: CONSTRUCTION (COMPLETE for Unit 2)
+- **Current Stage**: Build and Test (Complete)
+- **Next Stage**: Operations (PLACEHOLDER) — Unit 2 is done
+- **Status**: Unit 2 fully complete. Code generated, build/test instructions provided.

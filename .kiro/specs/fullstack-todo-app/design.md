@@ -263,6 +263,7 @@ class Todo(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None      # ISO 8601 date (YYYY-MM-DD) or None
     status: Status = Status.PENDING
+    reminder_at: datetime | None = None  # ISO 8601 datetime or None
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -272,6 +273,7 @@ class TodoCreate(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None      # Validated as YYYY-MM-DD
     status: Status = Status.PENDING
+    reminder_at: str | None = None   # Validated as ISO 8601 datetime
 
 class TodoUpdate(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=200)
@@ -279,6 +281,7 @@ class TodoUpdate(BaseModel):
     priority: Priority | None = None
     due_date: str | None = None
     status: Status | None = None
+    reminder_at: str | None = None   # ISO 8601 datetime or null to clear
 
 class TodoStats(BaseModel):
     total: int
@@ -305,6 +308,7 @@ interface Todo {
   priority: 'low' | 'medium' | 'high'
   due_date: string | null
   status: 'pending' | 'in-progress' | 'done'
+  reminder_at: string | null
   created_at: string
   updated_at: string | null
 }
@@ -316,8 +320,8 @@ interface TodoStats {
   overdue: number
 }
 
-type TodoCreate = Pick<Todo, 'title'> & Partial<Pick<Todo, 'description' | 'priority' | 'due_date' | 'status'>>
-type TodoUpdate = Partial<Pick<Todo, 'title' | 'description' | 'priority' | 'due_date' | 'status'>>
+type TodoCreate = Pick<Todo, 'title'> & Partial<Pick<Todo, 'description' | 'priority' | 'due_date' | 'status' | 'reminder_at'>>
+type TodoUpdate = Partial<Pick<Todo, 'title' | 'description' | 'priority' | 'due_date' | 'status' | 'reminder_at'>>
 ```
 
 ### JSON File Schemas
@@ -346,6 +350,7 @@ type TodoUpdate = Partial<Pick<Todo, 'title' | 'description' | 'priority' | 'due
     "priority": "high",
     "due_date": "2024-02-01",
     "status": "in-progress",
+    "reminder_at": "2024-01-31T09:00:00Z",
     "created_at": "2024-01-15T10:30:00Z",
     "updated_at": "2024-01-16T08:00:00Z"
   }

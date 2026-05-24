@@ -134,6 +134,8 @@
                     >
                       Due: {{ formatDate(todo.due_date) }}
                     </span>
+                    <!-- Reminder badge -->
+                    <ReminderBadge :reminder-at="todo.reminder_at" :status="todo.status" />
                   </div>
                 </div>
 
@@ -252,6 +254,23 @@
                 </div>
               </div>
 
+              <!-- Reminder field -->
+              <div class="mb-4">
+                <label for="todo-reminder-at" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                  Reminder
+                </label>
+                <input
+                  id="todo-reminder-at"
+                  v-model="createForm.reminder_at"
+                  type="datetime-local"
+                  class="input-field"
+                  data-testid="dashboard-create-reminder-input"
+                />
+                <p class="mt-1 text-xs text-secondary-500 dark:text-secondary-400">
+                  Set a date and time to be reminded
+                </p>
+              </div>
+
               <!-- Actions -->
               <div class="flex gap-3 justify-end mt-6">
                 <button
@@ -346,6 +365,7 @@ const createForm = reactive<TodoCreate>({
   description: undefined,
   priority: 'medium',
   due_date: undefined,
+  reminder_at: undefined,
 })
 
 // Fetch data on mount
@@ -384,6 +404,7 @@ async function handleCreateTodo() {
     description: createForm.description?.trim() || undefined,
     priority: createForm.priority,
     due_date: createForm.due_date || undefined,
+    reminder_at: createForm.reminder_at ? new Date(createForm.reminder_at).toISOString() : undefined,
   }
 
   const result = await createTodo(data)
@@ -404,6 +425,7 @@ function resetCreateForm() {
   createForm.description = undefined
   createForm.priority = 'medium'
   createForm.due_date = undefined
+  createForm.reminder_at = undefined
 }
 
 // Toggle todo status
