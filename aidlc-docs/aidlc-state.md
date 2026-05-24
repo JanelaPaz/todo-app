@@ -41,10 +41,10 @@
 - [x] Build and Test - COMPLETE
 
 ### 🟡 OPERATIONS PHASE
-- [ ] Operations - PLACEHOLDER
+- [x] Operations - PLACEHOLDER (entered; no actionable steps in current AI-DLC version)
 
 ## Current Status
-- **Lifecycle Phase**: CONSTRUCTION (COMPLETE for Unit 2)
-- **Current Stage**: Build and Test (Complete)
-- **Next Stage**: Operations (PLACEHOLDER) — Unit 2 is done
-- **Status**: Unit 2 fully complete. Code generated, build/test instructions provided.
+- **Lifecycle Phase**: OPERATIONS (PLACEHOLDER for Unit 2)
+- **Current Stage**: Operations (Placeholder)
+- **Next Stage**: None for Unit 2 — AI-DLC workflow ends here for this unit
+- **Status**: Unit 2 lifecycle complete through current AI-DLC scope. Operations is a placeholder for future deployment/monitoring/maintenance phases.
