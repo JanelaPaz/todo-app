@@ -110,3 +110,56 @@
 
 ---
 
+
+## Construction Phase - Unit 3: Notification Bell UI
+**Timestamp**: 2026-05-24T10:00:00Z
+**User Input**: "Using AI DLC, I want to develop Unit 3 (Notification Bell UI)"
+**AI Response**: Starting Construction Phase for Unit 3 (Notification Bell UI). Assessing stage requirements.
+**Context**: Unit 3 scope: NotificationBell.vue, NotificationPanel.vue, useNotifications.ts composable, notificationsApi in api.ts, Notification interface in types, bell in dashboard navbar. Frontend-only changes consuming Unit 1's HTTP API.
+
+---
+
+## Code Generation - Unit 3: Plan Approval
+**Timestamp**: 2026-05-24T10:01:00Z
+**AI Prompt**: "Ready to proceed? Approve & Continue or Request Changes?"
+**User Response**: "A[[rpve & Continue"
+**Status**: Approved
+**Context**: User approved code generation plan for Unit 3. Proceeding to Part 2 (Generation).
+
+---
+
+## Code Generation - Unit 3: Generation Complete
+**Timestamp**: 2026-05-24T10:02:00Z
+**AI Response**: Generated all Unit 3 code:
+- Modified frontend/types/index.ts (added Notification, NotificationsListResponse interfaces)
+- Modified frontend/utils/api.ts (added notificationsApi with 4 methods)
+- Created frontend/composables/useNotifications.ts (state + polling + optimistic updates)
+- Created frontend/components/NotificationPanel.vue (dropdown with list, actions, empty state)
+- Created frontend/components/NotificationBell.vue (bell icon + badge + panel toggle + outside click/Escape)
+- Modified frontend/pages/dashboard.vue (added NotificationBell to navbar)
+- Created aidlc-docs/construction/unit-3/code/code-summary.md
+**Context**: All 7 steps complete. Zero diagnostics errors. All acceptance criteria covered.
+
+---
+
+## Code Generation - Unit 3: User Approval
+**Timestamp**: 2026-05-24T10:03:00Z
+**User Input**: "Build & test"
+**AI Response**: Proceeding to Build and Test stage for Unit 3.
+**Status**: Approved
+**Context**: User approved generated code. Moving to Build and Test.
+
+---
+
+## Build and Test - Unit 3
+**Timestamp**: 2026-05-24T10:04:00Z
+**Build Status**: Success (TypeScript compiles with 0 errors after fixing PATCH method type and optimistic todo reminder_at)
+**Test Status**: Instructions generated (34 unit tests + 6 integration scenarios + 10 manual verification steps)
+**Files Generated**:
+- aidlc-docs/construction/build-and-test/unit-3-build-and-test.md
+**Fixes Applied During Build**:
+- Added 'PATCH' to FetchOptions method union type in utils/api.ts
+- Added missing reminder_at to optimistic todo in composables/useTodos.ts (pre-existing Unit 4 gap)
+**Context**: Unit 3 Construction Phase complete.
+
+---

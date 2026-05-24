@@ -32,7 +32,7 @@
 - [x] Application Design
 - [x] Units Generation
 
-### 🟢 CONSTRUCTION PHASE (Unit 2: Reminder Trigger Logic)
+### 🟢 CONSTRUCTION PHASE (Unit 2: Reminder Trigger Logic) — COMPLETE
 - [x] Functional Design - SKIPPED (logic fully specified in contracts)
 - [x] NFR Requirements - SKIPPED (no new NFRs for this unit)
 - [x] NFR Design - SKIPPED (no NFR patterns needed)
@@ -40,11 +40,19 @@
 - [x] Code Generation - COMPLETE
 - [x] Build and Test - COMPLETE
 
+### 🟢 CONSTRUCTION PHASE (Unit 3: Notification Bell UI)
+- [ ] Functional Design - SKIPPED (UI behavior fully specified in contracts + story map)
+- [ ] NFR Requirements - SKIPPED (no new NFRs for frontend component)
+- [ ] NFR Design - SKIPPED (no NFR patterns needed)
+- [ ] Infrastructure Design - SKIPPED (no infrastructure changes)
+- [x] Code Generation - COMPLETE
+- [x] Build and Test - COMPLETE
+
 ### 🟡 OPERATIONS PHASE
 - [ ] Operations - PLACEHOLDER
 
 ## Current Status
-- **Lifecycle Phase**: CONSTRUCTION (COMPLETE for Unit 2)
-- **Current Stage**: Build and Test (Complete)
-- **Next Stage**: Operations (PLACEHOLDER) — Unit 2 is done
-- **Status**: Unit 2 fully complete. Code generated, build/test instructions provided.
+- **Lifecycle Phase**: CONSTRUCTION (Unit 3: Notification Bell UI) — COMPLETE
+- **Current Stage**: Build and Test - COMPLETE
+- **Next Stage**: Operations (PLACEHOLDER) — Unit 3 is done
+- **Status**: Unit 3 fully complete. Code generated, TypeScript compiles cleanly, build/test instructions provided.
