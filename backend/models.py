@@ -103,3 +103,44 @@ class TodoStats(BaseModel):
     completed: int
     pending: int
     overdue: int
+
+
+# --- Notification Models ---
+
+
+class NotificationType(str, Enum):
+    """Types of notifications."""
+
+    REMINDER = "reminder"
+    OVERDUE = "overdue"
+
+
+class Notification(BaseModel):
+    """Internal notification model with all fields."""
+
+    id: str  # UUID4 string
+    user_id: str  # Reference to User.id
+    todo_id: str  # Reference to Todo.id
+    type: NotificationType
+    message: str  # Human-readable message
+    is_read: bool = False
+    created_at: datetime  # ISO 8601 timestamp
+
+
+class NotificationResponse(BaseModel):
+    """Response model for a single notification."""
+
+    id: str
+    user_id: str
+    todo_id: str
+    type: NotificationType
+    message: str
+    is_read: bool
+    created_at: datetime
+
+
+class NotificationsListResponse(BaseModel):
+    """Response model for notification list endpoint."""
+
+    notifications: list[NotificationResponse]
+    unread_count: int
