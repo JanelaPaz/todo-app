@@ -13,7 +13,7 @@ A full-stack Todo application designed as a polished workshop demo. The applicat
 - **Todo_Service**: The service responsible for CRUD operations on todo items
 - **JWT**: JSON Web Token used for stateless authentication, stored in httpOnly cookies
 - **User**: An entity with id, email, username, password_hash, and created_at fields
-- **Todo**: An entity with id, user_id, title, description, priority, due_date, status, created_at, and updated_at fields
+- **Todo**: An entity with id, user_id, title, description, priority, due_date, status, reminder_at, created_at, and updated_at fields
 - **Dashboard**: The main authenticated view showing todo statistics, recent activity, and the todo list
 - **Priority**: A classification for todos with values: low, medium, or high
 - **Status**: A classification for todo progress with values: pending, in-progress, or done

@@ -69,6 +69,7 @@ class Todo(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # ISO 8601 date (YYYY-MM-DD) or None
     status: Status = Status.PENDING
+    reminder_at: datetime | None = None  # ISO 8601 datetime or None
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -81,6 +82,7 @@ class TodoCreate(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # Validated as YYYY-MM-DD
     status: Status = Status.PENDING
+    reminder_at: str | None = None  # Validated as ISO 8601 datetime
 
 
 class TodoUpdate(BaseModel):
@@ -91,6 +93,7 @@ class TodoUpdate(BaseModel):
     priority: Priority | None = None
     due_date: str | None = None
     status: Status | None = None
+    reminder_at: str | None = None  # ISO 8601 datetime or null to clear
 
 
 class TodoStats(BaseModel):
@@ -100,3 +103,44 @@ class TodoStats(BaseModel):
     completed: int
     pending: int
     overdue: int
+
+
+# --- Notification Models ---
+
+
+class NotificationType(str, Enum):
+    """Types of notifications."""
+
+    REMINDER = "reminder"
+    OVERDUE = "overdue"
+
+
+class Notification(BaseModel):
+    """Internal notification model with all fields."""
+
+    id: str  # UUID4 string
+    user_id: str  # Reference to User.id
+    todo_id: str  # Reference to Todo.id
+    type: NotificationType
+    message: str  # Human-readable message
+    is_read: bool = False
+    created_at: datetime  # ISO 8601 timestamp
+
+
+class NotificationResponse(BaseModel):
+    """Response model for a single notification."""
+
+    id: str
+    user_id: str
+    todo_id: str
+    type: NotificationType
+    message: str
+    is_read: bool
+    created_at: datetime
+
+
+class NotificationsListResponse(BaseModel):
+    """Response model for notification list endpoint."""
+
+    notifications: list[NotificationResponse]
+    unread_count: int

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "9ec043ee-7ef6-46cc-8ae2-c6fa57ea3af8",
+    "user_id": "62bd18df-e460-4da9-911c-2bf258e62f53",
+    "todo_id": "b08c514e-9512-4a49-be16-a2ca0dcc4540",
+    "type": "reminder",
+    "message": "Reminder: asdfs",
+    "is_read": true,
+    "created_at": "2026-05-24T09:56:13.327308+00:00"
+  }
+]

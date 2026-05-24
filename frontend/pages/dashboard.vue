@@ -14,6 +14,16 @@
 
           <!-- Right side actions -->
           <div class="flex items-center gap-2">
+            <NuxtLink
+              to="/kanban"
+              class="btn-secondary text-sm flex items-center gap-1.5"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+              </svg>
+              <span class="hidden sm:inline">Kanban</span>
+            </NuxtLink>
+            <NotificationBell />
             <DarkModeToggle />
             <button
               type="button"
@@ -99,7 +109,10 @@
                 </button>
 
                 <!-- Todo content -->
-                <div class="flex-1 min-w-0">
+                <div
+                  class="flex-1 min-w-0 cursor-pointer"
+                  @click="openDetail(todo)"
+                >
                   <p
                     class="text-sm font-medium transition-colors duration-150"
                     :class="todo.status === 'done'
@@ -134,6 +147,8 @@
                     >
                       Due: {{ formatDate(todo.due_date) }}
                     </span>
+                    <!-- Reminder badge -->
+                    <ReminderBadge :reminder-at="todo.reminder_at" :status="todo.status" />
                   </div>
                 </div>
 
@@ -252,6 +267,23 @@
                 </div>
               </div>
 
+              <!-- Reminder field -->
+              <div class="mb-4">
+                <label for="todo-reminder-at" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                  Reminder
+                </label>
+                <input
+                  id="todo-reminder-at"
+                  v-model="createForm.reminder_at"
+                  type="datetime-local"
+                  class="input-field"
+                  data-testid="dashboard-create-reminder-input"
+                />
+                <p class="mt-1 text-xs text-secondary-500 dark:text-secondary-400">
+                  Set a date and time to be reminded
+                </p>
+              </div>
+
               <!-- Actions -->
               <div class="flex gap-3 justify-end mt-6">
                 <button
@@ -286,6 +318,15 @@
       </Transition>
     </Teleport>
 
+    <!-- Todo Detail Modal -->
+    <TodoDetailModal
+      :visible="showDetailModal"
+      :todo="detailTodo"
+      @update:visible="showDetailModal = $event"
+      @update="handleUpdateFromDetail"
+      @delete="handleDeleteFromDetail"
+    />
+
     <!-- Delete Confirmation Dialog -->
     <ConfirmDialog
       :visible="showDeleteConfirm"
@@ -307,7 +348,7 @@ import { reactive } from 'vue'
 import { useTodos } from '~/composables/useTodos'
 import { useAuth } from '~/composables/useAuth'
 import { useToast } from '~/composables/useToast'
-import type { Todo, TodoCreate } from '~/types'
+import type { Todo, TodoCreate, TodoUpdate } from '~/types'
 
 definePageMeta({
   layout: false,
@@ -333,6 +374,8 @@ const {
 // Local state
 const showCreateForm = ref(false)
 const showDeleteConfirm = ref(false)
+const showDetailModal = ref(false)
+const detailTodo = ref<Todo | null>(null)
 const todoToDelete = ref<Todo | null>(null)
 const creating = ref(false)
 const loggingOut = ref(false)
@@ -346,6 +389,7 @@ const createForm = reactive<TodoCreate>({
   description: undefined,
   priority: 'medium',
   due_date: undefined,
+  reminder_at: undefined,
 })
 
 // Fetch data on mount
@@ -384,6 +428,7 @@ async function handleCreateTodo() {
     description: createForm.description?.trim() || undefined,
     priority: createForm.priority,
     due_date: createForm.due_date || undefined,
+    reminder_at: createForm.reminder_at ? new Date(createForm.reminder_at).toISOString() : undefined,
   }
 
   const result = await createTodo(data)
@@ -404,6 +449,7 @@ function resetCreateForm() {
   createForm.description = undefined
   createForm.priority = 'medium'
   createForm.due_date = undefined
+  createForm.reminder_at = undefined
 }
 
 // Toggle todo status
@@ -423,6 +469,29 @@ async function toggleTodoStatus(todo: Todo) {
 function confirmDelete(todo: Todo) {
   todoToDelete.value = todo
   showDeleteConfirm.value = true
+}
+
+// Open detail modal
+function openDetail(todo: Todo) {
+  detailTodo.value = todo
+  showDetailModal.value = true
+}
+
+async function handleUpdateFromDetail(id: string, data: TodoUpdate) {
+  const result = await updateTodo(id, data)
+  if (result) {
+    toastSuccess('Todo updated successfully')
+    // Update the detailTodo ref so the modal shows fresh data
+    detailTodo.value = result
+    await fetchStats()
+  } else {
+    toastError(todosError.value || 'Failed to update todo')
+  }
+}
+
+function handleDeleteFromDetail(todo: Todo) {
+  showDetailModal.value = false
+  confirmDelete(todo)
 }
 
 async function handleDeleteTodo() {
