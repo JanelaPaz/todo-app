@@ -34,7 +34,7 @@ class TodoService:
             The created Todo object.
 
         Raises:
-            ValidationError: If title is invalid or due_date format is wrong.
+            ValidationError: If title is invalid or due_date/reminder_at format is wrong.
         """
         # Validate title is not whitespace-only
         if not data.title or not data.title.strip():
@@ -43,6 +43,10 @@ class TodoService:
         # Validate due_date format if provided
         if data.due_date is not None:
             self._validate_due_date(data.due_date)
+
+        # Validate reminder_at format if provided
+        if data.reminder_at is not None:
+            self._validate_reminder_at(data.reminder_at)
 
         # Create todo record with defaults
         todo_data = {
@@ -53,6 +57,7 @@ class TodoService:
             "priority": data.priority.value if data.priority else Priority.MEDIUM.value,
             "due_date": data.due_date,
             "status": data.status.value if data.status else Status.PENDING.value,
+            "reminder_at": data.reminder_at,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": None,
         }
@@ -196,6 +201,13 @@ class TodoService:
         if data.status is not None:
             updates["status"] = data.status.value
 
+        if data.reminder_at is not None:
+            self._validate_reminder_at(data.reminder_at)
+            updates["reminder_at"] = data.reminder_at
+        elif "reminder_at" in data.model_fields_set:
+            # Explicitly set to null — clear the reminder
+            updates["reminder_at"] = None
+
         # Set updated_at timestamp
         updates["updated_at"] = datetime.now(timezone.utc).isoformat()
 
@@ -285,4 +297,25 @@ class TodoService:
         except ValueError:
             raise ValidationError(
                 [{"field": "due_date", "message": "Invalid date format. Must be YYYY-MM-DD"}]
+            )
+
+    def _validate_reminder_at(self, reminder_at: str) -> None:
+        """Validate that reminder_at is a valid ISO 8601 datetime.
+
+        Accepts formats like:
+        - 2026-05-24T09:00:00Z
+        - 2026-05-24T09:00:00+00:00
+        - 2026-05-24T09:00:00
+
+        Args:
+            reminder_at: The datetime string to validate.
+
+        Raises:
+            ValidationError: If the datetime format is invalid.
+        """
+        try:
+            datetime.fromisoformat(reminder_at.replace("Z", "+00:00"))
+        except (ValueError, AttributeError):
+            raise ValidationError(
+                [{"field": "reminder_at", "message": "Invalid datetime format. Must be ISO 8601 (e.g., 2026-05-24T09:00:00Z)"}]
             )

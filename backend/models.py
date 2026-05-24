@@ -69,6 +69,7 @@ class Todo(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # ISO 8601 date (YYYY-MM-DD) or None
     status: Status = Status.PENDING
+    reminder_at: datetime | None = None  # ISO 8601 datetime or None
     created_at: datetime
     updated_at: datetime | None = None
 
@@ -81,6 +82,7 @@ class TodoCreate(BaseModel):
     priority: Priority = Priority.MEDIUM
     due_date: str | None = None  # Validated as YYYY-MM-DD
     status: Status = Status.PENDING
+    reminder_at: str | None = None  # Validated as ISO 8601 datetime
 
 
 class TodoUpdate(BaseModel):
@@ -91,6 +93,7 @@ class TodoUpdate(BaseModel):
     priority: Priority | None = None
     due_date: str | None = None
     status: Status | None = None
+    reminder_at: str | None = None  # ISO 8601 datetime or null to clear
 
 
 class TodoStats(BaseModel):

@@ -134,7 +134,7 @@
               </div>
 
               <!-- Due date field -->
-              <div class="mb-6">
+              <div class="mb-4">
                 <label for="todo-due-date" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
                   Due Date
                 </label>
@@ -148,6 +148,24 @@
                 />
                 <p v-if="errors.due_date" class="mt-1.5 text-sm text-red-600 dark:text-red-400" role="alert">
                   {{ errors.due_date }}
+                </p>
+              </div>
+
+              <!-- Reminder field -->
+              <div class="mb-6">
+                <label for="todo-reminder" class="block text-sm font-medium text-secondary-700 dark:text-secondary-300 mb-1.5">
+                  Reminder
+                </label>
+                <input
+                  id="todo-reminder"
+                  v-model="form.reminder_at"
+                  type="datetime-local"
+                  class="input-field"
+                  :disabled="submitting"
+                  data-testid="todo-form-reminder-input"
+                />
+                <p class="mt-1 text-xs text-secondary-500 dark:text-secondary-400">
+                  Set a date and time to be reminded about this todo
                 </p>
               </div>
 
@@ -226,6 +244,7 @@ const form = reactive({
   priority: 'medium' as 'low' | 'medium' | 'high',
   due_date: '',
   status: 'pending' as 'pending' | 'in-progress' | 'done',
+  reminder_at: '',
 })
 
 const errors = reactive({
@@ -248,6 +267,7 @@ watch(() => props.visible, (newVal) => {
       form.priority = props.todo.priority
       form.due_date = props.todo.due_date ?? ''
       form.status = props.todo.status
+      form.reminder_at = props.todo.reminder_at ? toLocalDatetimeString(props.todo.reminder_at) : ''
     } else {
       // Reset to defaults for creating
       form.title = ''
@@ -255,6 +275,7 @@ watch(() => props.visible, (newVal) => {
       form.priority = 'medium'
       form.due_date = ''
       form.status = 'pending'
+      form.reminder_at = ''
     }
   }
 })
@@ -267,6 +288,7 @@ watch(() => props.todo, (newTodo) => {
     form.priority = newTodo.priority
     form.due_date = newTodo.due_date ?? ''
     form.status = newTodo.status
+    form.reminder_at = newTodo.reminder_at ? toLocalDatetimeString(newTodo.reminder_at) : ''
   }
 })
 
@@ -348,6 +370,13 @@ function handleSubmit() {
       data.status = form.status
     }
 
+    // Handle reminder_at: convert local datetime to ISO 8601 UTC
+    const newReminderAt = form.reminder_at ? toISOString(form.reminder_at) : null
+    const existingReminderAt = todo.reminder_at ?? null
+    if (newReminderAt !== existingReminderAt) {
+      data.reminder_at = newReminderAt
+    }
+
     emit('submit', data)
   } else {
     // For creating, send all fields
@@ -364,6 +393,10 @@ function handleSubmit() {
 
     if (form.due_date) {
       data.due_date = form.due_date
+    }
+
+    if (form.reminder_at) {
+      data.reminder_at = toISOString(form.reminder_at)
     }
 
     emit('submit', data)
@@ -390,4 +423,30 @@ defineExpose({
   setError,
   setSubmitting,
 })
+
+/**
+ * Convert an ISO 8601 datetime string to a local datetime-local input value.
+ * e.g., "2026-05-24T09:00:00Z" → "2026-05-24T17:00" (in UTC+8)
+ */
+function toLocalDatetimeString(isoString: string): string {
+  const date = new Date(isoString)
+  if (isNaN(date.getTime())) return ''
+  // Format as YYYY-MM-DDTHH:mm for datetime-local input
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  return `${year}-${month}-${day}T${hours}:${minutes}`
+}
+
+/**
+ * Convert a datetime-local input value to an ISO 8601 UTC string.
+ * e.g., "2026-05-24T09:00" → "2026-05-24T01:00:00.000Z" (from UTC+8)
+ */
+function toISOString(localDatetime: string): string {
+  const date = new Date(localDatetime)
+  if (isNaN(date.getTime())) return ''
+  return date.toISOString()
+}
 </script>
