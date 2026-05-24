@@ -14,6 +14,7 @@
 
           <!-- Right side actions -->
           <div class="flex items-center gap-2">
+            <NotificationBell />
             <DarkModeToggle />
             <button
               type="button"
